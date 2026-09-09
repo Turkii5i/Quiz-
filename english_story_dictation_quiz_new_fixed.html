@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>اختبار إملاء القصة الإنجليزية</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eef7f7;color:#173333;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.container{max-width:820px;margin:auto;padding:18px 14px 40px}
+header,.card{background:#fff;border-radius:26px;box-shadow:0 5px 24px #00000012}
+header{padding:22px 18px;margin-bottom:14px}
+h1{margin:0 0 7px;color:#2d7779;font-size:27px}
+.desc{color:#637676;line-height:1.75;font-size:16px}
+.progress-wrap{height:10px;background:#dfeaea;border-radius:99px;overflow:hidden;margin-top:17px;direction:ltr}
+.progress{height:100%;width:0;background:#459da0;transition:.25s}
+.progress-text{margin-top:7px;color:#718080;font-size:14px}
+.card{padding:22px 18px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:18px}
+.badge{background:#e3f5f5;color:#2d7779;border-radius:99px;padding:11px 16px;font-weight:700}
+.audio{border:2px solid #d7e8e8;border-radius:20px;padding:20px;text-align:center;background:#fbfefe}
+.audio h2{margin:0 0 12px;color:#2d7779;font-size:21px}
+.play,.next,.restart{width:100%;border:0;border-radius:16px;padding:15px;font-size:18px;font-weight:700;cursor:pointer}
+.play{background:#459da0;color:#fff}
+.next,.restart{background:#173333;color:#fff;margin-top:15px}
+.sentence-title{font-weight:700;font-size:19px;color:#2d7779;margin:22px 0 9px}
+.sentence{color:#173333 !important;-webkit-text-fill-color:#173333;direction:ltr;text-align:left;background:#f5f9f9;border:2px solid #d5e5e5;border-radius:18px;padding:18px;font-size:22px;line-height:1.8;min-height:90px}
+.note{margin-top:12px;color:#718080;line-height:1.7;font-size:14px;text-align:center}
+.hidden{display:none}
+select,input{width:100%;margin:7px 0 14px;font-size:16px}
+select{padding:12px;border:2px solid #d7e8e8;border-radius:12px;background:#fff;color:#173333}
+input[type=range]{accent-color:#459da0}
+.controls label{display:block;text-align:right;font-weight:700;color:#2d7779;margin-top:5px}
+@media(max-width:600px){h1{font-size:23px}.card{padding:17px 13px}.sentence{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>اختبار الإملاء الصوتي — القصة الإنجليزية</h1>
+<div class="desc">
+استمع إلى المقطع، واكتب ما تسمعه في ورقة خارجية. بعد ذلك راجع إجابتك مع الجملة الكاملة الظاهرة أسفل الصوت، ثم انتقل إلى المقطع التالي.
+</div>
+<div class="progress-wrap"><div id="progress" class="progress"></div></div>
+<div id="progressText" class="progress-text">التقدم: 1%</div>
+</header>
+
+<section class="card" id="card">
+<div class="top">
+<div class="badge" id="number">المقطع 1 من 69</div>
+<div class="badge">Listening &amp; Dictation</div>
+</div>
+
+<div class="audio">
+<h2>استمع إلى المقطع</h2>
+<div class="controls">
+  <label>سرعة النطق: <span id="speedValue">1.00×</span></label>
+  <input id="speed" type="range" min="0.50" max="1.50" step="0.05" value="1.00">
+  <label>التأخير قبل التشغيل: <span id="delayValue">0 ثانية</span></label>
+  <input id="delay" type="range" min="0" max="5" step="1" value="0">
+  <label>الصوت الإنجليزي</label>
+  <select id="voice">
+    <option value="-1">الصوت التلقائي في الجهاز</option>
+  </select>
+  <button class="play" id="play">▶ تشغيل الصوت</button>
+  <button class="restart" id="replay" type="button">↻ إعادة تشغيل الصوت</button>
+</div>
+</div>
+
+<div class="sentence-title">الجملة الكاملة للمراجعة</div>
+<div class="sentence" id="sentence">When the two children got back to the tunnel with the men from the farm, they found Bobbie and Jim asleep.</div>
+
+<button class="next" id="next">التالي</button>
+<div class="note">إذا ظهرت "الصوت التلقائي في الجهاز" فقط، سيستخدم الملف صوت الآيفون الافتراضي عند التشغيل. للحصول على قائمة الأصوات كاملة، افتح الملف في Safari.</div>
+</section>
+</div>
+
+<script>
+const story = ["When the two children got back to the tunnel with the men from the farm, they found Bobbie and Jim asleep.", "The men carried Jim on a piece of flat wood.", "'Where does he live?' asked one of them.", "'In Northumberland,' answered Bobbie.", "'He told me while we were waiting.'", "'I'm at a school in Maidbridge,' said Jim, 'I suppose I must get back there.'", "'A doctor ought to see you first,' said the man.", "'Bring him to our house,' said Bobbie.", "'It's not far along the road.", "I'm sure Mother will say it's all right.'", "Mother did say it was all right, although she was a little surprised at first.", "Then Bobbie explained.", "I'm sorry to be so much trouble,' Jim said to Mother as the men carried him in.", "His face was white with pain.", "'Don't worry, you poor dear,\" said Mother.", "'You must go to bed, and I'll send for Doctor Forrest.\"", "Mother also sent a message to Jim's school, to tell them what had happened.", "'My grandfather lives near here,' said Jim. 'Then I'll write and tell him, too,' said Mother.", "'I'm sure he'll want to know.", "What's his name?'", "After breakfast the next day, someone knocked at the front door.", "'That will be the doctor again,' said Mother.", "She went out of the kitchen and closed the door.", "But it wasn't the doctor.", "The children listened as Mother and the visitor went upstairs.", "They heard them talking, and were sure that they knew the voice of the visitor.", "But who was it?", "After a while, the bedroom door opened and they heard Mother and the visitor come down and go into the front room of the house.", "Then they heard Mother calling: 'Bobbie!'", "Mother was in the hall.", "\"Jim's grandfather has come,' she said.", "'He wants to see you all.'", "They followed Mother into the other room, and there sat - THEIR OWN OLD GENTLEMAN.", "'Oh, it's you!' cried Bobbie.", "'How wonderful!' said Peter.", "'But you're not going to take Jim away, are you? I was hoping he could stay.!", "The old gentleman smiled.", "'No,' he said.", "'Your mother is very kind.", "She has agreed to let Jim stay here.", "I thought of sending a nurse, but your mother was good enough to agree to be his nurse herself.'", "'But what about her writing?' said Peter, before anyone could stop him.", "'There won't be anything for him to eat if she doesn't write.!", "The old gentleman smiled kindly at Mother.", "'She has agreed to stop her writing for a while, and become Head Nurse of my hospital.", "'Oh!' said Phyllis.", "'Will we have to go away from the white house, and the railway and everything?'", "'No, no, darling,' Mother said quickly.", "'The hospital is here, at this house.'", "'And my unlucky Jim is the only one needing a nurse,' said the old gentleman.", "'But there will be a maid and someone to cook the meals until Jim is well.'", "\"Will we have to go away from the white house, and the railway and everything?'", "'No, no, darling,' Mother said quickly.", "'The hospital is here, at this house.'", "\"And my unlucky Jim is the only one needing a nurse,' said the old gentleman.", "'But there will be a maid and someone to cook the meals until Jim is well.'", "'Then will Mother start writing again?' asked Peter.", "'Perhaps something nice will happen, and she won't have to,' said the old gentleman.", "'Take care of your mother, my dears.", "She's a woman in a million.", "Now, perhaps Bobbie can take me to the door?'", "The two of them went outside, and the old gentleman said, 'I got your letter, my child, but it wasn't necessary.", "When I read about your father in the newspapers at the time, I began trying to find out things.", "I haven't done much yet, but I have hopes, my dear - I have hopes.'", "'Oh!' said Bobbie, crying a little.", "'But keep your secret a little longer,' he said.", "'You don't think Father did it, do you?' said Bobbie.", "'Oh, say you don't!\"", "\"I'm sure he didn't,' said the old gentleman."];
+let i = 0;
+
+const numberEl = document.getElementById("number");
+const sentenceEl = document.getElementById("sentence");
+const progressEl = document.getElementById("progress");
+const progressText = document.getElementById("progressText");
+const playBtn = document.getElementById("play");
+const nextBtn = document.getElementById("next");
+const replayBtn = document.getElementById("replay");
+const speedEl = document.getElementById("speed");
+const delayEl = document.getElementById("delay");
+const voiceEl = document.getElementById("voice");
+const speedValue = document.getElementById("speedValue");
+const delayValue = document.getElementById("delayValue");
+let voices = [];
+
+function render() {
+  numberEl.textContent = "المقطع " + (i + 1) + " من " + story.length;
+  sentenceEl.textContent = story[i];
+  progressEl.style.width = ((i + 1) / story.length * 100) + "%";
+  progressText.textContent = "التقدم: " + Math.round((i + 1) / story.length * 100) + "%";
+  nextBtn.textContent = i === story.length - 1 ? "إنهاء الاختبار" : "التالي";
+}
+
+function loadVoices() {
+  if (!("speechSynthesis" in window)) return;
+
+  const all = speechSynthesis.getVoices();
+  voices = all.filter(v => /^en(-|$)/i.test(v.lang));
+
+  voiceEl.innerHTML = "";
+  const autoOpt = document.createElement("option");
+  autoOpt.value = "-1";
+  autoOpt.textContent = "الصوت التلقائي في الجهاز";
+  voiceEl.appendChild(autoOpt);
+
+  voices.forEach((v, idx) => {
+    const opt = document.createElement("option");
+    opt.value = String(idx);
+    opt.textContent = v.name + " — " + v.lang;
+    voiceEl.appendChild(opt);
+  });
+
+  const preferred = voices.findIndex(v =>
+    /Samantha|Karen|Daniel|Alex|Google US English|Microsoft.*English/i.test(v.name)
+  );
+  if (preferred >= 0) voiceEl.value = String(preferred);
+}
+
+let pendingTimer = null;
+
+function speak() {
+  if (!("speechSynthesis" in window)) {
+    alert("هذا المتصفح لا يدعم النطق الصوتي. افتح الملف في Safari أو Chrome.");
+    return;
+  }
+
+  if (pendingTimer) {
+    clearTimeout(pendingTimer);
+    pendingTimer = null;
+  }
+
+  speechSynthesis.cancel();
+
+  const delay = Number(delayEl.value) * 1000;
+  playBtn.textContent = delay ? "⏳ انتظر..." : "🔊 جارٍ التشغيل...";
+
+  pendingTimer = setTimeout(() => {
+    pendingTimer = null;
+
+    const u = new SpeechSynthesisUtterance(story[i]);
+    u.rate = Number(speedEl.value);
+    u.pitch = 1;
+
+    const selectedIndex = Number(voiceEl.value);
+    const selected = voices[selectedIndex];
+
+    if (selected) {
+      u.voice = selected;
+      u.lang = selected.lang;
+    } else {
+      // Fallback: let the device choose its default English/system voice.
+      u.lang = "en-US";
+    }
+
+    u.onstart = () => {
+      playBtn.textContent = "🔊 جارٍ التشغيل...";
+    };
+    u.onend = () => {
+      playBtn.textContent = "▶ تشغيل الصوت";
+    };
+    u.onerror = () => {
+      playBtn.textContent = "▶ تشغيل الصوت";
+      alert("تعذر تشغيل الصوت. إذا كنت تستخدم معاينة الملفات، افتح الملف في Safari.");
+    };
+
+    speechSynthesis.speak(u);
+  }, delay);
+}
+
+speedEl.addEventListener("input", () => speedValue.textContent = Number(speedEl.value).toFixed(2) + "×");
+delayEl.addEventListener("input", () => delayValue.textContent = delayEl.value + " ثانية");
+if ("speechSynthesis" in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+playBtn.addEventListener("click", speak);
+replayBtn.addEventListener("click", speak);
+
+nextBtn.addEventListener("click", () => {
+  if (i < story.length - 1) {
+    i++;
+    render();
+    window.scrollTo({top: 0, behavior: "smooth"});
+  } else {
+    speechSynthesis.cancel();
+    document.getElementById("card").innerHTML = `
+      <div style="text-align:center;padding:28px 10px">
+        <h2 style="color:#2d7779">انتهت القصة</h2>
+        <p style="font-size:19px;line-height:1.8">
+          أكملت جميع المقاطع وعددها ${story.length} مقطعًا.
+        </p>
+        <button class="restart" onclick="location.reload()">إعادة الاختبار</button>
+      </div>`;
+  }
+});
+
+render();
+</script>
+</body>
+</html>
