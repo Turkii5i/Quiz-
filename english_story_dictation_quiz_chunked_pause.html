@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>English Story Dictation - Chunked</title>
+<style>
+:root{--teal:#2f8587;--dark:#173b3d;--line:#d7e8e8;--bg:#eef7f7;--text:#173536;}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.65}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 40px} h1{text-align:center;color:var(--teal);font-size:28px;margin:5px 0}
+.sub{text-align:center;color:#6d7e7f;margin:0 0 16px}
+.panel{background:#fff;border:2px solid var(--line);border-radius:26px;padding:20px;margin:14px 0}
+.badge{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap} .pill{background:#e3f4f4;color:var(--teal);border-radius:20px;padding:9px 14px;font-weight:800}
+label{display:block;color:var(--teal);font-weight:800;font-size:18px;margin:15px 0 6px}
+input[type=range],select{width:100%;min-height:44px} select{font-size:17px;padding:8px;border:2px solid var(--line);border-radius:15px;background:#fff;color:var(--text)}
+button{width:100%;min-height:54px;border:0;border-radius:18px;margin-top:12px;font-size:20px;font-weight:800;color:#fff;background:var(--teal)}
+button.secondary{background:var(--dark)} button:disabled{opacity:.55}
+.current{direction:ltr;text-align:left;background:#f7fbfb;border:2px solid var(--line);border-radius:20px;padding:20px;font-size:26px;font-weight:700;min-height:90px}
+.pause{text-align:center;background:#fff7df;border:2px solid #f0dfaa;border-radius:18px;padding:14px;margin-top:14px;font-weight:800;color:#6d5b20;font-size:19px}
+.review{direction:ltr;text-align:left;background:#f7fbfb;border:2px solid var(--line);border-radius:20px;padding:16px;font-size:20px;line-height:1.6}
+.note{text-align:center;color:#6d7e7f;font-size:14px;margin-top:12px} .progress{height:10px;background:#dce9e9;border-radius:20px;overflow:hidden;margin-top:14px}
+.bar{height:100%;width:0;background:var(--teal);transition:width .2s}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>Listening &amp; Dictation</h1>
+<p class="sub">تُقرأ الجملة على أجزاء قصيرة: كل جزء يُسمع ثم يتوقف الصوت، حتى تتمكن من كتابته.</p>
+
+<section class="panel">
+<div class="badge">
+<div class="pill" id="counter">الجملة 1 من 69</div>
+<div class="pill" id="chunkCounter">الجزء 1</div>
+</div>
+
+<label for="speed">سرعة النطق: <span id="speedValue">1.00×</span></label>
+<input id="speed" type="range" min="0.50" max="1.50" step="0.05" value="1">
+
+<label for="delay">مدة التوقف بين الأجزاء: <span id="delayValue">10 ثوانٍ</span></label>
+<input id="delay" type="range" min="3" max="15" step="1" value="10">
+
+<label for="voice">الصوت الإنجليزي</label>
+<select id="voice"><option value="-1">الصوت التلقائي في الجهاز</option></select>
+
+<div class="current" id="current">When the two children</div>
+<div class="pause" id="pauseBox" hidden>توقف للكتابة: <span id="pauseCount">10</span> ثوانٍ</div>
+
+<button id="play" type="button">▶ تشغيل الجملة على أجزاء</button>
+<button id="replay" class="secondary" type="button">↻ إعادة تشغيل الجملة</button>
+<button id="next" class="secondary" type="button">التالي ←</button>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="note" id="status">اضغط تشغيل: سيقرأ الجزء ثم يتوقف، ثم يكمل الجزء التالي.</div>
+</section>
+
+<section class="panel">
+<div style="color:var(--teal);font-size:22px;font-weight:900;margin-bottom:10px">الجملة الكاملة للمراجعة</div>
+<div class="review" id="review"></div>
+<div class="note">يمكنك كتابة كل جزء في ورقة خارجية قبل أن يكمل الصوت.</div>
+</section>
+</main>
+
+<script>
+(() => {
+const story=["When the two children got back to the tunnel with the men from the farm, they found Bobbie and Jim asleep.", "The men carried Jim on a piece of flat wood.", "'Where does he live?' asked one of them.", "'In Northumberland,' answered Bobbie.", "'He told me while we were waiting.'", "'I'm at a school in Maidbridge,' said Jim, 'I suppose I must get back there.'", "'A doctor ought to see you first,' said the man.", "'Bring him to our house,' said Bobbie.", "'It's not far along the road.", "I'm sure Mother will say it's all right.'", "Mother did say it was all right, although she was a little surprised at first.", "Then Bobbie explained.", "I'm sorry to be so much trouble,' Jim said to Mother as the men carried him in.", "His face was white with pain.", "'Don't worry, you poor dear,\" said Mother.", "'You must go to bed, and I'll send for Doctor Forrest.\"", "Mother also sent a message to Jim's school, to tell them what had happened.", "'My grandfather lives near here,' said Jim. 'Then I'll write and tell him, too,' said Mother.", "'I'm sure he'll want to know.", "What's his name?'", "After breakfast the next day, someone knocked at the front door.", "'That will be the doctor again,' said Mother.", "She went out of the kitchen and closed the door.", "But it wasn't the doctor.", "The children listened as Mother and the visitor went upstairs.", "They heard them talking, and were sure that they knew the voice of the visitor.", "But who was it?", "After a while, the bedroom door opened and they heard Mother and the visitor come down and go into the front room of the house.", "Then they heard Mother calling: 'Bobbie!'", "Mother was in the hall.", "\"Jim's grandfather has come,' she said.", "'He wants to see you all.'", "They followed Mother into the other room, and there sat - THEIR OWN OLD GENTLEMAN.", "'Oh, it's you!' cried Bobbie.", "'How wonderful!' said Peter.", "'But you're not going to take Jim away, are you? I was hoping he could stay.!", "The old gentleman smiled.", "'No,' he said.", "'Your mother is very kind.", "She has agreed to let Jim stay here.", "I thought of sending a nurse, but your mother was good enough to agree to be his nurse herself.'", "'But what about her writing?' said Peter, before anyone could stop him.", "'There won't be anything for him to eat if she doesn't write.!", "The old gentleman smiled kindly at Mother.", "'She has agreed to stop her writing for a while, and become Head Nurse of my hospital.", "'Oh!' said Phyllis.", "'Will we have to go away from the white house, and the railway and everything?'", "'No, no, darling,' Mother said quickly.", "'The hospital is here, at this house.'", "'And my unlucky Jim is the only one needing a nurse,' said the old gentleman.", "'But there will be a maid and someone to cook the meals until Jim is well.'", "\"Will we have to go away from the white house, and the railway and everything?'", "'No, no, darling,' Mother said quickly.", "'The hospital is here, at this house.'", "\"And my unlucky Jim is the only one needing a nurse,' said the old gentleman.", "'But there will be a maid and someone to cook the meals until Jim is well.'", "'Then will Mother start writing again?' asked Peter.", "'Perhaps something nice will happen, and she won't have to,' said the old gentleman.", "'Take care of your mother, my dears.", "She's a woman in a million.", "Now, perhaps Bobbie can take me to the door?'", "The two of them went outside, and the old gentleman said, 'I got your letter, my child, but it wasn't necessary.", "When I read about your father in the newspapers at the time, I began trying to find out things.", "I haven't done much yet, but I have hopes, my dear - I have hopes.'", "'Oh!' said Bobbie, crying a little.", "'But keep your secret a little longer,' he said.", "'You don't think Father did it, do you?' said Bobbie.", "'Oh, say you don't!\"", "\"I'm sure he didn't,' said the old gentleman."];
+const chunks=["When the two children got", "back to the tunnel with", "the men from the farm,", "they found Bobbie", "and Jim asleep.", "The men carried Jim on", "a piece of flat wood.", "'Where does he live?' asked", "one of them.", "'In Northumberland,' answered Bobbie.", "'He told me", "while we were waiting.'", "'I'm at a school in", "Maidbridge,' said Jim, 'I suppose", "I must get back there.'", "'A doctor ought to see", "you first,' said the man.", "'Bring him to", "our house,' said Bobbie.", "'It's not far", "along the road.", "I'm sure Mother will say", "it's all right.'", "Mother did say it was", "all right, although she was", "a little surprised at first.", "Then Bobbie explained.", "I'm sorry to be so", "much trouble,' Jim said to", "Mother as the", "men carried him in.", "His face was", "white with pain.", "'Don't worry, you", "poor dear,\" said Mother.", "'You must go to bed,", "and I'll send", "for Doctor Forrest.\"", "Mother also sent a message", "to Jim's school, to tell", "them what had happened.", "'My grandfather lives near here,'", "said Jim. 'Then I'll write", "and tell him,", "too,' said Mother.", "'I'm sure he'll", "want to know.", "What's his name?'", "After breakfast the next day,", "someone knocked at", "the front door.", "'That will be the doctor", "again,' said Mother.", "She went out of the", "kitchen and closed the door.", "But it wasn't the doctor.", "The children listened as Mother", "and the visitor went upstairs.", "They heard them talking, and", "were sure that they knew", "the voice of the visitor.", "But who was it?", "After a while, the bedroom", "door opened and they heard", "Mother and the visitor come", "down and go into the", "front room of the house.", "Then they heard", "Mother calling: 'Bobbie!'", "Mother was in the hall.", "\"Jim's grandfather has", "come,' she said.", "'He wants to", "see you all.'", "They followed Mother into the", "other room, and there sat", "- THEIR OWN OLD GENTLEMAN.", "'Oh, it's you!' cried Bobbie.", "'How wonderful!' said Peter.", "'But you're not going to", "take Jim away, are you?", "I was hoping", "he could stay.!", "The old gentleman smiled.", "'No,' he said.", "'Your mother is very kind.", "She has agreed to let", "Jim stay here.", "I thought of sending a", "nurse, but your mother was", "good enough to agree to", "be his nurse herself.'", "'But what about her writing?'", "said Peter, before", "anyone could stop him.", "'There won't be anything for", "him to eat", "if she doesn't write.!", "The old gentleman", "smiled kindly at Mother.", "'She has agreed to stop", "her writing for a while,", "and become Head", "Nurse of my hospital.", "'Oh!' said Phyllis.", "'Will we have to go", "away from the white house,", "and the railway and everything?'", "'No, no, darling,'", "Mother said quickly.", "'The hospital is", "here, at this house.'", "'And my unlucky Jim is", "the only one needing a", "nurse,' said the old gentleman.", "'But there will be a", "maid and someone to cook", "the meals until", "Jim is well.'", "\"Will we have to go", "away from the white house,", "and the railway and everything?'", "'No, no, darling,'", "Mother said quickly.", "'The hospital is", "here, at this house.'", "\"And my unlucky Jim is", "the only one needing a", "nurse,' said the old gentleman.", "'But there will be a", "maid and someone to cook", "the meals until", "Jim is well.'", "'Then will Mother start writing", "again?' asked Peter.", "'Perhaps something nice will happen,", "and she won't have to,'", "said the old gentleman.", "'Take care of", "your mother, my dears.", "She's a woman", "in a million.", "Now, perhaps Bobbie can take", "me to the door?'", "The two of them went", "outside, and the old gentleman", "said, 'I got your letter,", "my child, but", "it wasn't necessary.", "When I read about your", "father in the newspapers at", "the time, I began trying", "to find out things.", "I haven't done much yet,", "but I have hopes, my", "dear - I have hopes.'", "'Oh!' said Bobbie,", "crying a little.", "'But keep your secret a", "little longer,' he said.", "'You don't think Father did", "it, do you?' said Bobbie.", "'Oh, say you don't!\"", "\"I'm sure he didn't,' said", "the old gentleman."];
+
+let sentenceIndex=0, voiceList=[], timer=null, stopped=false;
+
+const counter=document.getElementById("counter");
+const chunkCounter=document.getElementById("chunkCounter");
+const speed=document.getElementById("speed");
+const speedValue=document.getElementById("speedValue");
+const delay=document.getElementById("delay");
+const delayValue=document.getElementById("delayValue");
+const voice=document.getElementById("voice");
+const current=document.getElementById("current");
+const review=document.getElementById("review");
+const play=document.getElementById("play");
+const replay=document.getElementById("replay");
+const next=document.getElementById("next");
+const status=document.getElementById("status");
+const bar=document.getElementById("bar");
+const pauseBox=document.getElementById("pauseBox");
+const pauseCount=document.getElementById("pauseCount");
+
+function sentenceChunks(sentence) {
+  const words=sentence.split(/\s+/);
+  const a=[];
+  let i=0;
+  while(i<words.length) {
+    let take=Math.min(5,words.length-i);
+    const rem=words.length-i;
+    if(rem>5 && rem-take<3) take=Math.ceil(rem/2);
+    a.push(words.slice(i,i+take).join(" "));
+    i+=take;
+  }
+  return a;
+}
+
+function render() {
+  clearTimeout(timer);
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  const s=story[sentenceIndex];
+  const cs=sentenceChunks(s);
+  counter.textContent=`الجملة ${sentenceIndex+1} من ${story.length}`;
+  chunkCounter.textContent=`${cs.length} أجزاء`;
+  current.textContent=cs[0] || s;
+  review.textContent=s;
+  bar.style.width=`${((sentenceIndex+1)/story.length)*100}%`;
+  next.disabled=sentenceIndex>=story.length-1;
+  pauseBox.hidden=true;
+  status.textContent="اضغط تشغيل: سيقرأ كل جزء ثم يتوقف للكتابة.";
+}
+
+function loadVoices() {
+  if(!("speechSynthesis" in window)) return;
+  voiceList=speechSynthesis.getVoices().filter(v=>/^en(-|$)/i.test(v.lang));
+  voice.innerHTML="";
+  const auto=document.createElement("option");
+  auto.value="-1"; auto.textContent="الصوت التلقائي في الجهاز"; voice.appendChild(auto);
+  voiceList.forEach((v,i)=>{
+    const o=document.createElement("option");
+    o.value=String(i); o.textContent=`${v.name} — ${v.lang}`;
+    voice.appendChild(o);
+  });
+  const p=voiceList.findIndex(v=>/Samantha|Karen|Daniel|Alex|Google US English|Microsoft.*English/i.test(v.name));
+  if(p>=0) voice.value=String(p);
+}
+
+function speak(text) {
+  return new Promise(resolve=>{
+    if(stopped) return resolve();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=Number(speed.value); u.pitch=1;
+    const vi=Number(voice.value);
+    if(voiceList[vi]) {u.voice=voiceList[vi];u.lang=voiceList[vi].lang;}
+    else u.lang="en-US";
+    u.onend=resolve; u.onerror=resolve;
+    speechSynthesis.speak(u);
+  });
+}
+
+async function playSentence() {
+  if(!("speechSynthesis" in window)) {
+    status.textContent="النطق الصوتي غير متاح. افتح الصفحة في Safari.";
+    return;
+  }
+  stopped=false; clearTimeout(timer); speechSynthesis.cancel();
+  play.disabled=true; replay.disabled=true; next.disabled=true;
+  const cs=sentenceChunks(story[sentenceIndex]);
+
+  for(let i=0;i<cs.length && !stopped;i++) {
+    current.textContent=cs[i];
+    chunkCounter.textContent=`الجزء ${i+1} من ${cs.length}`;
+    status.textContent=`استمع واكتب: الجزء ${i+1}`;
+    await speak(cs[i]);
+    if(stopped) break;
+
+    if(i<cs.length-1) {
+      let left=Number(delay.value);
+      pauseBox.hidden=false; pauseCount.textContent=left;
+      await new Promise(resolve=>{
+        const tick=()=>{
+          if(stopped) return resolve();
+          left--;
+          pauseCount.textContent=Math.max(left,0);
+          if(left<=0) {pauseBox.hidden=true;resolve();}
+          else timer=setTimeout(tick,1000);
+        };
+        timer=setTimeout(tick,1000);
+      });
+    }
+  }
+
+  play.disabled=false; replay.disabled=false; next.disabled=sentenceIndex>=story.length-1;
+  if(!stopped) {
+    current.textContent=story[sentenceIndex];
+    status.textContent="انتهت الجملة. اضغط التالي للجملة التالية.";
+  }
+}
+
+function stop() {
+  stopped=true; clearTimeout(timer); pauseBox.hidden=true;
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  play.disabled=false; replay.disabled=false; next.disabled=sentenceIndex>=story.length-1;
+}
+
+speed.addEventListener("input",()=>speedValue.textContent=Number(speed.value).toFixed(2)+"×");
+delay.addEventListener("input",()=>delayValue.textContent=delay.value+" ثوانٍ");
+play.addEventListener("click",()=>{stop();playSentence();});
+replay.addEventListener("click",()=>{stop();playSentence();});
+next.addEventListener("click",()=>{
+  stop();
+  if(sentenceIndex<story.length-1) {sentenceIndex++;render();}
+});
+if("speechSynthesis" in window) {
+  speechSynthesis.onvoiceschanged=loadVoices;
+  loadVoices();
+}
+render();
+})();
+</script>
+</body>
+</html>
