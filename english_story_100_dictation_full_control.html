@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>English Story — 100 Dictation Clips</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--dark:#172033;--muted:#64748b;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--line:#dbe3ef}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#eef4ff,#f8fafc);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--dark)}
+.wrap{max-width:760px;margin:auto;padding:18px}
+header{text-align:center;padding:14px 4px 10px}
+h1{margin:0;font-size:28px}.sub{color:var(--muted);margin-top:7px}
+.card{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 10px 30px rgba(20,35,60,.08);margin-top:14px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{background:#edf4ff;color:#1d4ed8;border-radius:999px;padding:7px 12px;font-weight:800}
+.progress{height:9px;background:#e8edf5;border-radius:99px;overflow:hidden;margin:14px 0}.bar{height:100%;width:1%;background:var(--blue);transition:.25s}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}.mode button{background:#f7f9fc;color:var(--dark);border:1px solid var(--line)}.mode button.active{background:#eaf2ff;border-color:#93b4ff;color:#1d4ed8}
+button{border:0;border-radius:14px;padding:13px 15px;font:inherit;font-weight:800;cursor:pointer;background:var(--dark);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+.listen{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+button.play{background:var(--blue)}button.stop{background:#475569}button.replay{background:#0f766e}
+textarea{width:100%;min-height:145px;resize:vertical;border:2px solid var(--line);border-radius:17px;padding:15px;font:18px/1.65 Arial,sans-serif;direction:ltr;text-align:left;margin-top:12px}
+textarea:focus{outline:none;border-color:#8eb1ff}
+.label{font-weight:900;margin-top:16px;display:block}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:12px}
+.check{background:var(--green)}.prev{background:#475569}.next{background:#111827}
+.answer{margin-top:14px;padding:14px;border-radius:16px;background:#f8fafc;border:1px solid var(--line);direction:ltr;text-align:left;font:18px/1.6 Arial,sans-serif}
+.answer.ok{border-color:#86efac;background:#f0fdf4}.answer.bad{border-color:#fecaca;background:#fef2f2}
+.feedback{font-weight:900;margin-top:8px}
+.controls{margin-top:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.speed{display:flex;gap:10px;align-items:center;margin-top:12px;color:var(--muted)}
+input[type=range]{flex:1}
+.hidden{display:none!important}
+#result h2{margin-top:0}.score{font-size:30px;font-weight:950;text-align:center;margin:8px}
+.error-list{display:grid;gap:8px;margin-top:12px}.err{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:10px}
+.note{color:var(--muted);font-size:13px;margin-top:8px}
+@media(max-width:560px){.wrap{padding:12px}.card{padding:14px;border-radius:18px}.listen,.actions{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions .check{grid-column:1/-1}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>اختبار إملاء القصة</h1><div class="sub">100 مقطع — اسمع، اكتب، تحقق، ثم انتقل أو ارجع</div></header>
+
+<div class="card" id="quizCard">
+  <div class="top"><span class="badge" id="counter">المقطع 1 من 100</span><span class="badge" id="scoreBadge">0 صحيح</span></div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+
+  <div class="mode">
+    <button id="normalMode" class="active">استماع عادي</button>
+    <button id="slowMode">استماع بطيء</button>
+  </div>
+
+  <div class="listen">
+    <button class="play" id="playBtn">▶ تشغيل الصوت</button>
+    <button class="replay" id="replayBtn">↻ إعادة المقطع</button>
+    <button class="stop" id="pauseBtn">⏸ إيقاف مؤقت</button>
+    <button class="stop" id="resumeBtn">▶ متابعة الصوت</button>
+  </div>
+
+  <div class="speed"><span>السرعة</span><input id="speed" type="range" min=".5" max="1.5" step=".05" value="1"><b id="speedVal">1.00×</b></div>
+
+  <label class="label" for="answer">اكتب ما سمعته بالإنجليزية:</label>
+  <textarea id="answer" dir="ltr" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+
+  <div class="actions">
+    <button class="check" id="checkBtn">✓ تحقق من الإجابة</button>
+    <button class="prev" id="prevBtn">← السابق</button>
+    <button class="next" id="nextBtn">التالي →</button>
+  </div>
+
+  <div id="feedback" class="feedback"></div>
+  <div id="correctBox" class="answer hidden"></div>
+  <div class="note">يمكنك الإيقاف المؤقت، المتابعة، إعادة المقطع، والرجوع للمقطع السابق في أي وقت.</div>
+</div>
+
+<div class="card hidden" id="result"></div>
+</div>
+
+<script>
+const clips = [{"n": 1, "text": "When the two children got back to"}, {"n": 2, "text": "the tunnel with the men from the farm,"}, {"n": 3, "text": "they found Bobbie and Jim asleep."}, {"n": 4, "text": "The men carried Jim on a piece of flat wood."}, {"n": 5, "text": "'Where does he live?' asked one of them."}, {"n": 6, "text": "'In Northumberland,' answered Bobbie."}, {"n": 7, "text": "'He told me while we were waiting.'"}, {"n": 8, "text": "'I'm at a school in Maidbridge,' said Jim,"}, {"n": 9, "text": "'I suppose I must get back there.'"}, {"n": 10, "text": "'A doctor ought to see you first,' said the man."}, {"n": 11, "text": "'Bring him to our house,' said Bobbie."}, {"n": 12, "text": "'It's not far along the road."}, {"n": 13, "text": "Mother did say it was all right,"}, {"n": 14, "text": "although she was a little surprised at first."}, {"n": 15, "text": "Mother did say it was all right,"}, {"n": 16, "text": "although she was a little surprised at first."}, {"n": 17, "text": "Then Bobbie explained."}, {"n": 18, "text": "I'm sorry to be so much trouble,' Jim"}, {"n": 19, "text": "said to Mother as the men carried him in."}, {"n": 20, "text": "His face was white with pain."}, {"n": 21, "text": "'You must go to bed,"}, {"n": 22, "text": "and I'll send for Doctor Forrest.\""}, {"n": 23, "text": "'You must go to bed, and I'll send for Doctor Forrest.\""}, {"n": 24, "text": "Mother also sent a message to Jim's school, to tell them what had happened."}, {"n": 25, "text": "I'm sure Mother will say it's all right."}, {"n": 26, "text": "Mother also sent a message to Jim's school,"}, {"n": 27, "text": "to tell them what had happened."}, {"n": 28, "text": "'My grandfather lives near here,' said Jim."}, {"n": 29, "text": "'Then I'll write and tell him, too,' said Mother."}, {"n": 30, "text": "After breakfast the next day, someone knocked at the front door."}, {"n": 31, "text": "'That will be the doctor again,' said Mother."}, {"n": 32, "text": "She went out of the kitchen and closed the door."}, {"n": 33, "text": "But it wasn't the doctor."}, {"n": 34, "text": "The children listened as Mother and the visitor went upstairs."}, {"n": 35, "text": "They heard them talking, and were sure"}, {"n": 36, "text": "that they knew the voice of the visitor."}, {"n": 37, "text": "But who was it?"}, {"n": 38, "text": "After a while, the bedroom door opened and they heard Mother and"}, {"n": 39, "text": "the visitor come down and go into the front room of the house."}, {"n": 40, "text": "The children listened as Mother and the visitor went upstairs."}, {"n": 41, "text": "They heard them talking, and were sure"}, {"n": 42, "text": "that they knew the voice of the visitor."}, {"n": 43, "text": "Mother was in the hall."}, {"n": 44, "text": "\"Jim's grandfather has come,' she said."}, {"n": 45, "text": "'He wants to see you all.'"}, {"n": 46, "text": "After a while, the bedroom door opened"}, {"n": 47, "text": "and they heard Mother and the visitor come down"}, {"n": 48, "text": "and go into the front room of the house."}, {"n": 49, "text": "'Oh, it's you!' cried Bobbie."}, {"n": 50, "text": "'How wonderful!' said Peter."}, {"n": 51, "text": "'But you're not going to take Jim away,"}, {"n": 52, "text": "are you? I was hoping he could stay.!"}, {"n": 53, "text": "The old gentleman smiled."}, {"n": 54, "text": "'No,' he said."}, {"n": 55, "text": "They followed Mother into the other room,"}, {"n": 56, "text": "and there sat - THEIR OWN OLD GENTLEMAN."}, {"n": 57, "text": "She has agreed to let Jim stay here."}, {"n": 58, "text": "I thought of sending a nurse, but your mother"}, {"n": 59, "text": "was good enough to agree to be his nurse herself.'"}, {"n": 60, "text": "'But what about her writing?' said Peter, before anyone could stop him."}, {"n": 61, "text": "'There won't be anything for him to eat if she doesn't write.!"}, {"n": 62, "text": "'But you're not going to take Jim away, are you?"}, {"n": 63, "text": "I was hoping he could stay.!"}, {"n": 64, "text": "'She has agreed to stop her writing for"}, {"n": 65, "text": "a while, and become Head Nurse of my hospital."}, {"n": 66, "text": "'Oh!' said Phyllis."}, {"n": 67, "text": "'Will we have to go away from"}, {"n": 68, "text": "the white house, and the railway and everything?'"}, {"n": 69, "text": "'No, no, darling,' Mother said quickly."}, {"n": 70, "text": "She has agreed to let Jim stay here."}, {"n": 71, "text": "I thought of sending a nurse, but your mother"}, {"n": 72, "text": "was good enough to agree to be his nurse herself.'"}, {"n": 73, "text": "'But what about her writing?' said Peter,"}, {"n": 74, "text": "before anyone could stop him."}, {"n": 75, "text": "'But there will be a maid and someone"}, {"n": 76, "text": "to cook the meals until Jim is well.'"}, {"n": 77, "text": "\"Will we have to go away from"}, {"n": 78, "text": "the white house, and the railway and everything?'"}, {"n": 79, "text": "'No, no, darling,' Mother said quickly."}, {"n": 80, "text": "'She has agreed to stop her writing for a while,"}, {"n": 81, "text": "and become Head Nurse of my hospital."}, {"n": 82, "text": "\"And my unlucky Jim is the only one needing a nurse,' said the old gentleman."}, {"n": 83, "text": "'Will we have to go away from the white house,"}, {"n": 84, "text": "and the railway and everything?'"}, {"n": 85, "text": "'Then will Mother start writing again?' asked Peter."}, {"n": 86, "text": "'Perhaps something nice will happen, and she won't have to,' said the old gentleman."}, {"n": 87, "text": "'But there will be a maid and someone to cook the meals"}, {"n": 88, "text": "until Jim is well.'"}, {"n": 89, "text": "She's a woman in a million."}, {"n": 90, "text": "Now, perhaps Bobbie can take me to the door?'"}, {"n": 91, "text": "The two of them went outside,"}, {"n": 92, "text": "and the old gentleman said, 'I got your letter, my child, but it wasn't necessary."}, {"n": 93, "text": "When I read about your father in the newspapers at the time,"}, {"n": 94, "text": "I began trying to find out things."}, {"n": 95, "text": "I haven't done much yet, but I have hopes, my dear - I have hopes."}, {"n": 96, "text": "'Oh!' said Bobbie, crying a little."}, {"n": 97, "text": "'But keep your secret a little longer,' he said."}, {"n": 98, "text": "'You don't think Father did it, do you?' said Bobbie."}, {"n": 99, "text": "'Oh, say you don't!\""}, {"n": 100, "text": "\"I'm sure he didn't,' said the old gentleman."}];
+let i=0;
+let results=Array(clips.length).fill(null);
+let submitted=Array(clips.length).fill("");
+let slow=false;
+let currentUtterance=null;
+let voices=[];
+
+const $=id=>document.getElementById(id);
+function loadVoices(){ voices=speechSynthesis.getVoices().filter(v=>/^en(-|_)/i.test(v.lang)); }
+loadVoices(); if("speechSynthesis" in window) speechSynthesis.onvoiceschanged=loadVoices;
+
+function render(){
+  const c=clips[i];
+  $("counter").textContent=`المقطع ${i+1} من ${clips.length}`;
+  $("bar").style.width=((i+1)/clips.length*100)+"%";
+  $("answer").value=submitted[i]||"";
+  $("feedback").textContent="";
+  $("correctBox").className="answer hidden";
+  $("correctBox").textContent="";
+  $("scoreBadge").textContent=results.filter(x=>x?.correct).length+" صحيح";
+  $("prevBtn").disabled=i===0;
+  $("nextBtn").disabled=false;
+}
+function chooseVoice(){
+  return voices.find(v=>/^en-US$/i.test(v.lang)) ||
+         voices.find(v=>/^en-GB$/i.test(v.lang)) ||
+         voices[0] || null;
+}
+function speak(){
+  if(!("speechSynthesis" in window)){alert("المتصفح لا يدعم تشغيل الصوت.");return}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(clips[i].text);
+  u.lang="en-US";
+  u.rate=Number($("speed").value)*(slow?.72:1);
+  u.pitch=1;
+  const v=chooseVoice(); if(v)u.voice=v;
+  currentUtterance=u;
+  u.onend=()=>{currentUtterance=null};
+  speechSynthesis.speak(u);
+}
+function normalize(s){
+  return s.toLowerCase()
+    .replace(/[“”"‘’]/g,"'")
+    .replace(/[.,!?;:()[\]{}]/g," ")
+    .replace(/-/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function tokens(s){return normalize(s).split(" ").filter(Boolean)}
+function check(){
+  const expected=clips[i].text, given=$("answer").value;
+  submitted[i]=given;
+  const a=tokens(expected), b=tokens(given);
+  let wrong=[], max=Math.max(a.length,b.length);
+  for(let k=0;k<max;k++) if(a[k]!==b[k]) wrong.push({expected:a[k]||"(مفقود)",given:b[k]||"(مفقود)"});
+  const correct=normalize(expected)===normalize(given);
+  results[i]={correct,wrong,expected,given};
+  $("correctBox").className="answer "+(correct?"ok":"bad");
+  $("correctBox").innerHTML="<b>الجملة الصحيحة:</b><br>"+escapeHtml(expected);
+  $("feedback").textContent=correct?"✓ إجابة صحيحة":"✗ توجد أخطاء — راجع الجملة الصحيحة أعلاه.";
+  $("feedback").style.color=correct?"var(--green)":"var(--red)";
+  $("scoreBadge").textContent=results.filter(x=>x?.correct).length+" صحيح";
+  if(i===clips.length-1) showResult();
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function next(){ if(i<clips.length-1){speechSynthesis.cancel();i++;render()} else showResult(); }
+function prev(){ if(i>0){speechSynthesis.cancel();i--;render()} }
+function showResult(){
+  speechSynthesis.cancel();
+  const done=results.filter(Boolean).length, correct=results.filter(x=>x?.correct).length;
+  const wrong=results.filter(x=>x&&!x.correct);
+  const freq={};
+  wrong.forEach(r=>r.wrong.forEach(w=>{
+    if(w.given!=="(مفقود)" && w.expected!=="(مفقود)"){
+      const key=w.given+" → "+w.expected; freq[key]=(freq[key]||0)+1;
+    } else if(w.expected!=="(مفقود)"){
+      const key="مفقود: "+w.expected; freq[key]=(freq[key]||0)+1;
+    }
+  }));
+  const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  $("quizCard").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  $("result").innerHTML=`<h2>النتيجة النهائية</h2>
+  <div class="score">${correct} / ${clips.length}</div>
+  <p style="text-align:center">تم التحقق من ${done} مقطعًا — نسبة الصحة: ${Math.round(correct/clips.length*100)}%</p>
+  <h3>ملخص الأخطاء المتكررة</h3>
+  ${top.length?'<div class="error-list">'+top.map(([k,n])=>`<div class="err"><b>${n} مرة</b> — ${escapeHtml(k)}</div>`).join("")+'</div>':'<p>لا توجد أخطاء مسجلة.</p>'}
+  <div class="controls"><button onclick="location.reload()">إعادة الاختبار</button></div>`;
+}
+
+$("playBtn").onclick=speak;
+$("replayBtn").onclick=speak;
+$("pauseBtn").onclick=()=>speechSynthesis.pause();
+$("resumeBtn").onclick=()=>speechSynthesis.resume();
+$("checkBtn").onclick=check;
+$("nextBtn").onclick=next;
+$("prevBtn").onclick=prev;
+$("normalMode").onclick=()=>{slow=false;$("normalMode").classList.add("active");$("slowMode").classList.remove("active")};
+$("slowMode").onclick=()=>{slow=true;$("slowMode").classList.add("active");$("normalMode").classList.remove("active")};
+$("speed").oninput=()=>{$("speedVal").textContent=Number($("speed").value).toFixed(2)+"×"};
+$("answer").addEventListener("input",()=>{submitted[i]=$("answer").value});
+render();
+</script>
+</body>
+</html>
